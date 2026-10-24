@@ -1,0 +1,82 @@
+# NeMo Guardrails configuration — using Groq (OpenAI-compatible)
+
+models:
+  - type: main
+    engine: openai
+    model: openai/gpt-oss-20b
+    parameters:
+      base_url: "https://api.groq.com/openai/v1"
+      temperature: 0.2
+      max_tokens: 1024
+
+  - type: self_check_input
+    engine: openai
+    model: openai/gpt-oss-20b
+    parameters:
+      base_url: "https://api.groq.com/openai/v1"
+      temperature: 0.0
+      max_tokens: 10
+
+  - type: self_check_output
+    engine: openai
+    model: openai/gpt-oss-20b
+    parameters:
+      base_url: "https://api.groq.com/openai/v1"
+      temperature: 0.0
+      max_tokens: 10
+
+instructions:
+  - type: general
+    content: |
+      You are a helpful, witty, and truthful assistant.
+      Be concise, friendly, and maximally truth-seeking.
+      Do not provide assistance for criminal activity, self-harm, or generating harmful content.
+      If a request violates safety, politely refuse and explain why.
+
+sample_conversation: |
+  user "Hello!"
+  bot "Hey there! How can I help you today?"
+  user "What's the capital of France?"
+  bot "Paris is the capital of France."
+
+rails:
+  # input:
+  #   flows:
+  #     - self check input
+  # output:
+  #   flows:
+  #     - self check output
+  dialog:
+    single_call:
+      enabled: false
+
+prompts:
+  - task: self_check_input
+    content: |
+      Your task is to check if the user message below complies with the company policy.
+
+      Company policy for user messages:
+      - Should not contain harmful, illegal, or unethical requests
+      - Should not ask for assistance with criminal activity
+      - Should not contain hate speech or extreme toxicity
+      - Should not request self-harm or suicide methods
+
+      User message: "{{ user_input }}"
+
+      Question: Should the user message be blocked (Yes or No)?
+      Answer:
+
+  - task: self_check_output
+    content: |
+      Your task is to check if the bot response below complies with the company policy.
+
+      Company policy for bot responses:
+      - Should not contain harmful, illegal, or unethical content
+      - Should not provide assistance with criminal activity
+      - Should not contain hate speech
+      - Should not encourage self-harm
+
+      Bot response: "{{ bot_response }}"
+
+      Question: Should the bot response be blocked (Yes or No)?
+      Answer:

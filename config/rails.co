@@ -1,0 +1,26 @@
+define user express greeting
+  "hello"
+  "hi"
+  "hey"
+  "good morning"
+  "good afternoon"
+
+define bot express greeting
+  "Hello! I'm a Groq-powered assistant protected by NeMo Guardrails. How can I help you today?"
+
+define user ask about capabilities
+  "what can you do"
+  "what are you"
+  "who are you"
+  "help"
+
+define bot explain capabilities
+  "I'm a helpful AI assistant built with Groq, Streamlit, Pydantic, and NVIDIA NeMo Guardrails. I can answer questions, help with reasoning, coding, and more — while staying safe."
+
+define flow greeting
+  user express greeting
+  bot express greeting
+
+define flow capabilities
+  user ask about capabilities
+  bot explain capabilities
